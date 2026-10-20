@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExamSession.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.access</a> &gt; <span class="el_source">ExamSession.java</span></div><h1>ExamSession.java</h1><pre class="source lang-java linenums">package proctoring.access;
+
+import java.time.Instant;
+import java.util.UUID;
+
+public class ExamSession {
+
+<span class="fc" id="L8">    public enum Status { STARTED, SUBMITTED, CANCELLED }</span>
+
+    private String id;
+    private String studentId;
+    private String examId;
+    private Instant startedAt;
+    private Instant deadline;
+    private Status status;
+
+    private ExamSession() {
+    }
+
+<span class="fc" id="L20">    public ExamSession(String studentId, String examId, Instant startedAt, Instant deadline) {</span>
+<span class="fc" id="L21">        this.id = &quot;SES-&quot; + UUID.randomUUID().toString().substring(0, 8);</span>
+<span class="fc" id="L22">        this.studentId = studentId;</span>
+<span class="fc" id="L23">        this.examId = examId;</span>
+<span class="fc" id="L24">        this.startedAt = startedAt;</span>
+<span class="fc" id="L25">        this.deadline = deadline;</span>
+<span class="fc" id="L26">        this.status = Status.STARTED;</span>
+<span class="fc" id="L27">    }</span>
+
+    public void submit() {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (status != Status.STARTED) {</span>
+<span class="fc" id="L31">            throw new IllegalStateException(&quot;Cannot submit session &quot; + id + &quot; in status &quot; + status);</span>
+        }
+<span class="fc" id="L33">        status = Status.SUBMITTED;</span>
+<span class="fc" id="L34">    }</span>
+
+    public void cancel() {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (status == Status.CANCELLED) {</span>
+<span class="fc" id="L38">            throw new IllegalStateException(&quot;Session &quot; + id + &quot; is already cancelled&quot;);</span>
+        }
+<span class="fc" id="L40">        status = Status.CANCELLED;</span>
+<span class="fc" id="L41">    }</span>
+
+<span class="fc" id="L43">    public String getId() { return id; }</span>
+<span class="fc" id="L44">    public String getStudentId() { return studentId; }</span>
+<span class="fc" id="L45">    public String getExamId() { return examId; }</span>
+<span class="fc" id="L46">    public Instant getStartedAt() { return startedAt; }</span>
+<span class="fc" id="L47">    public Instant getDeadline() { return deadline; }</span>
+<span class="fc" id="L48">    public Status getStatus() { return status; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProctoringSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.app</a> &gt; <span class="el_source">ProctoringSystem.java</span></div><h1>ProctoringSystem.java</h1><pre class="source lang-java linenums">package proctoring.app;
+
+import proctoring.access.ExamAccessService;
+import proctoring.access.ExamSessionRepository;
+import proctoring.access.ExamTimer;
+import proctoring.access.IdentityVerifier;
+import proctoring.facade.ExamAdminFacade;
+import proctoring.facade.ExamProcessRepository;
+import proctoring.facade.ExamProctoringFacade;
+import proctoring.monitoring.MonitoringRepository;
+import proctoring.monitoring.PlagiarismChecker;
+import proctoring.monitoring.ProctoringService;
+import proctoring.monitoring.ScreenMonitor;
+import proctoring.results.GradingEngine;
+import proctoring.results.ResultRepository;
+import proctoring.results.ResultsService;
+import proctoring.results.TranscriptRecorder;
+
+import java.nio.file.Path;
+import java.time.Clock;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class ProctoringSystem {
+
+<span class="fc" id="L28">    public static final Set&lt;String&gt; STUDENTS = Set.of(&quot;230001&quot;, &quot;230002&quot;, &quot;230003&quot;);</span>
+
+<span class="fc" id="L30">    public static final Map&lt;String, List&lt;String&gt;&gt; ANSWER_KEYS = Map.of(</span>
+<span class="fc" id="L31">            &quot;SDP-FINAL&quot;, List.of(&quot;facade&quot;, &quot;adapter&quot;, &quot;composition&quot;, &quot;least knowledge&quot;, &quot;compensation&quot;),</span>
+<span class="fc" id="L32">            &quot;OOP-MIDTERM&quot;, List.of(&quot;encapsulation&quot;, &quot;inheritance&quot;, &quot;polymorphism&quot;));</span>
+
+<span class="fc" id="L34">    private static final List&lt;String&gt; LEAKED_ANSWERS =</span>
+<span class="fc" id="L35">            List.of(&quot;singleton&quot;, &quot;observer&quot;, &quot;strategy&quot;, &quot;decorator&quot;, &quot;factory&quot;);</span>
+
+<span class="fc" id="L37">    private final ScreenMonitor screenMonitor = new ScreenMonitor();</span>
+<span class="fc" id="L38">    private final GradingEngine gradingEngine = new GradingEngine(ANSWER_KEYS);</span>
+    private final ExamProctoringFacade examFacade;
+    private final ExamAdminFacade adminFacade;
+
+<span class="fc" id="L42">    public ProctoringSystem(Path dataDir) {</span>
+<span class="fc" id="L43">        ExamAccessService access = new ExamAccessService(</span>
+                new IdentityVerifier(STUDENTS),
+<span class="fc" id="L45">                new ExamTimer(Clock.systemUTC(), Map.of(&quot;SDP-FINAL&quot;, Duration.ofMinutes(120))),</span>
+                new ExamSessionRepository(dataDir));
+<span class="fc" id="L47">        ProctoringService proctoring = new ProctoringService(</span>
+                screenMonitor, new PlagiarismChecker(LEAKED_ANSWERS), new MonitoringRepository(dataDir));
+<span class="fc" id="L49">        ResultsService results = new ResultsService(</span>
+                gradingEngine, new TranscriptRecorder(), new ResultRepository(dataDir));
+<span class="fc" id="L51">        ExamProcessRepository processes = new ExamProcessRepository(dataDir);</span>
+
+<span class="fc" id="L53">        examFacade = new ExamProctoringFacade(access, proctoring, results, processes);</span>
+<span class="fc" id="L54">        adminFacade = new ExamAdminFacade(access, proctoring, results, processes, examFacade);</span>
+<span class="fc" id="L55">    }</span>
+
+    public ExamProctoringFacade examFacade() {
+<span class="fc" id="L58">        return examFacade;</span>
+    }
+
+    public ExamAdminFacade adminFacade() {
+<span class="fc" id="L62">        return adminFacade;</span>
+    }
+
+    public void setScreenMonitorOnline(boolean online) {
+<span class="fc" id="L66">        screenMonitor.setOnline(online);</span>
+<span class="fc" id="L67">    }</span>
+
+    public void setGradingEngineOnline(boolean online) {
+<span class="fc" id="L70">        gradingEngine.setOnline(online);</span>
+<span class="fc" id="L71">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

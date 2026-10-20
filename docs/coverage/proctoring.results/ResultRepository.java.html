@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResultRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.results</a> &gt; <span class="el_source">ResultRepository.java</span></div><h1>ResultRepository.java</h1><pre class="source lang-java linenums">package proctoring.results;
+
+import proctoring.persistence.JsonFileStore;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+
+public class ResultRepository {
+
+    private final JsonFileStore&lt;ExamResult&gt; store;
+
+<span class="fc" id="L13">    public ResultRepository(Path dataDir) {</span>
+<span class="fc" id="L14">        store = new JsonFileStore&lt;&gt;(dataDir.resolve(&quot;exam_results.json&quot;), ExamResult.class, ExamResult::getId);</span>
+<span class="fc" id="L15">    }</span>
+
+    public void save(ExamResult result) {
+<span class="fc" id="L18">        store.save(result);</span>
+<span class="fc" id="L19">    }</span>
+
+    public Optional&lt;ExamResult&gt; findById(String id) {
+<span class="fc" id="L22">        return store.findById(id);</span>
+    }
+
+    public List&lt;ExamResult&gt; findByExamSessionId(String examSessionId) {
+<span class="fc" id="L26">        return store.findAll().stream()</span>
+<span class="fc" id="L27">                .filter(r -&gt; r.getExamSessionId().equals(examSessionId))</span>
+<span class="fc" id="L28">                .toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

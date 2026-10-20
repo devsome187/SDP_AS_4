@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranscriptRecorder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.results</a> &gt; <span class="el_source">TranscriptRecorder.java</span></div><h1>TranscriptRecorder.java</h1><pre class="source lang-java linenums">package proctoring.results;
+
+<span class="fc" id="L3">public class TranscriptRecorder {</span>
+
+    public String letterGrade(int score) {
+<span class="fc bfc" id="L6" title="All 2 branches covered.">        if (score &gt;= 90) return &quot;A&quot;;</span>
+<span class="fc bfc" id="L7" title="All 2 branches covered.">        if (score &gt;= 75) return &quot;B&quot;;</span>
+<span class="fc bfc" id="L8" title="All 2 branches covered.">        if (score &gt;= 60) return &quot;C&quot;;</span>
+<span class="fc bfc" id="L9" title="All 2 branches covered.">        if (score &gt;= 50) return &quot;D&quot;;</span>
+<span class="fc" id="L10">        return &quot;F&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

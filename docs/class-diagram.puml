@@ -1,0 +1,91 @@
+@startuml
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 60
+hide empty members
+hide circle
+title Exam Proctoring - Facade
+
+package "Client" {
+  class ExamProctoringCli
+}
+
+package "Facades" {
+  class ExamProctoringFacade {
+    +conductExam(studentId, examId, answers)
+    +resume(processId)
+  }
+  class ExamAdminFacade {
+    +listProcesses()
+    +compensate(processId, reason)
+  }
+  class ExamProcessRepository <<exam_process.json>>
+}
+
+package "A: Exam Access" {
+  class ExamAccessService {
+    +startExam()
+    +submit()
+    +cancel()
+  }
+  class IdentityVerifier
+  class ExamTimer
+  class ExamSession
+  class ExamSessionRepository <<exam_sessions.json>>
+}
+
+package "B: Proctoring" {
+  class ProctoringService {
+    +monitor()
+    +cancel()
+  }
+  class ScreenMonitor
+  class PlagiarismChecker
+  class MonitoringSession
+  class MonitoringRepository <<monitoring_sessions.json>>
+}
+
+package "C: Results" {
+  class ResultsService {
+    +gradeAndRecord()
+    +cancel()
+  }
+  class GradingEngine
+  class TranscriptRecorder
+  class ExamResult
+  class ResultRepository <<exam_results.json>>
+}
+
+ExamProctoringCli --> ExamProctoringFacade
+ExamProctoringCli --> ExamAdminFacade
+
+ExamProctoringFacade --> ExamAccessService
+ExamProctoringFacade --> ProctoringService
+ExamProctoringFacade --> ResultsService
+ExamAccessService -[hidden]right- ProctoringService
+ProctoringService -[hidden]right- ResultsService
+ExamProctoringFacade --> ExamProcessRepository
+ExamAdminFacade --> ExamProctoringFacade
+ExamAdminFacade --> ExamProcessRepository
+ExamAdminFacade ..> ExamAccessService
+ExamAdminFacade ..> ProctoringService
+ExamAdminFacade ..> ResultsService
+
+ExamAccessService --> IdentityVerifier
+ExamAccessService --> ExamTimer
+ExamAccessService --> ExamSessionRepository
+ExamSessionRepository --> ExamSession
+
+ProctoringService --> ScreenMonitor
+ProctoringService --> PlagiarismChecker
+ProctoringService --> MonitoringRepository
+MonitoringRepository --> MonitoringSession
+
+ResultsService --> GradingEngine
+ResultsService --> TranscriptRecorder
+ResultsService --> ResultRepository
+ResultRepository --> ExamResult
+@enduml

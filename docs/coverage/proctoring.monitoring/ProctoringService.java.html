@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProctoringService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.monitoring</a> &gt; <span class="el_source">ProctoringService.java</span></div><h1>ProctoringService.java</h1><pre class="source lang-java linenums">package proctoring.monitoring;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+public class ProctoringService {
+
+    private final ScreenMonitor screenMonitor;
+    private final PlagiarismChecker plagiarismChecker;
+    private final MonitoringRepository repository;
+
+    public ProctoringService(ScreenMonitor screenMonitor, PlagiarismChecker plagiarismChecker,
+<span class="fc" id="L14">                             MonitoringRepository repository) {</span>
+<span class="fc" id="L15">        this.screenMonitor = screenMonitor;</span>
+<span class="fc" id="L16">        this.plagiarismChecker = plagiarismChecker;</span>
+<span class="fc" id="L17">        this.repository = repository;</span>
+<span class="fc" id="L18">    }</span>
+
+    public MonitoringSession monitor(String examSessionId, String studentId, List&lt;String&gt; answers) {
+<span class="fc" id="L21">        screenMonitor.startCapture(studentId);</span>
+<span class="fc" id="L22">        double score = plagiarismChecker.similarity(answers);</span>
+<span class="fc" id="L23">        MonitoringSession session = new MonitoringSession(examSessionId, studentId, score,</span>
+<span class="fc" id="L24">                plagiarismChecker.isSuspicious(score));</span>
+<span class="fc" id="L25">        repository.save(session);</span>
+<span class="fc" id="L26">        return session;</span>
+    }
+
+    public void cancel(String monitoringId) {
+<span class="fc" id="L30">        MonitoringSession session = get(monitoringId);</span>
+<span class="fc" id="L31">        session.cancel();</span>
+<span class="fc" id="L32">        repository.save(session);</span>
+<span class="fc" id="L33">    }</span>
+
+    public MonitoringSession get(String monitoringId) {
+<span class="fc" id="L36">        return repository.findById(monitoringId)</span>
+<span class="fc" id="L37">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Monitoring session not found: &quot; + monitoringId));</span>
+    }
+
+    public Optional&lt;MonitoringSession&gt; findByExamSession(String examSessionId) {
+<span class="fc" id="L41">        return repository.findByExamSessionId(examSessionId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

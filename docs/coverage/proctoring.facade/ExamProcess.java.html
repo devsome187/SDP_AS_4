@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExamProcess.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.facade</a> &gt; <span class="el_source">ExamProcess.java</span></div><h1>ExamProcess.java</h1><pre class="source lang-java linenums">package proctoring.facade;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class ExamProcess {
+
+<span class="fc" id="L9">    public enum Stage { PENDING_B, PENDING_C, COMPLETED, COMPENSATED }</span>
+
+    private String id;
+    private String studentId;
+    private String examId;
+    private List&lt;String&gt; answers;
+    private Stage stage;
+    private String examSessionId;
+    private String monitoringId;
+    private String resultId;
+    private String failureReason;
+<span class="fc" id="L20">    private List&lt;String&gt; rollbackLog = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L22">    private ExamProcess() {</span>
+<span class="fc" id="L23">    }</span>
+
+<span class="fc" id="L25">    public ExamProcess(String studentId, String examId, List&lt;String&gt; answers, String examSessionId) {</span>
+<span class="fc" id="L26">        this.id = &quot;PRC-&quot; + UUID.randomUUID().toString().substring(0, 8);</span>
+<span class="fc" id="L27">        this.studentId = studentId;</span>
+<span class="fc" id="L28">        this.examId = examId;</span>
+<span class="fc" id="L29">        this.answers = answers;</span>
+<span class="fc" id="L30">        this.examSessionId = examSessionId;</span>
+<span class="fc" id="L31">        this.stage = Stage.PENDING_B;</span>
+<span class="fc" id="L32">    }</span>
+
+    public void monitoringDone(String monitoringId) {
+<span class="fc" id="L35">        this.monitoringId = monitoringId;</span>
+<span class="fc" id="L36">        this.stage = Stage.PENDING_C;</span>
+<span class="fc" id="L37">    }</span>
+
+    public void gradingDone(String resultId) {
+<span class="fc" id="L40">        this.resultId = resultId;</span>
+<span class="fc" id="L41">        this.stage = Stage.COMPLETED;</span>
+<span class="fc" id="L42">    }</span>
+
+    public void compensated(String reason, List&lt;String&gt; rollbackLog) {
+<span class="fc" id="L45">        this.failureReason = reason;</span>
+<span class="fc" id="L46">        this.rollbackLog = rollbackLog;</span>
+<span class="fc" id="L47">        this.stage = Stage.COMPENSATED;</span>
+<span class="fc" id="L48">    }</span>
+
+    public boolean isFinished() {
+<span class="fc bfc" id="L51" title="All 4 branches covered.">        return stage == Stage.COMPLETED || stage == Stage.COMPENSATED;</span>
+    }
+
+<span class="fc" id="L54">    public String getId() { return id; }</span>
+<span class="fc" id="L55">    public String getStudentId() { return studentId; }</span>
+<span class="fc" id="L56">    public String getExamId() { return examId; }</span>
+<span class="fc" id="L57">    public List&lt;String&gt; getAnswers() { return answers; }</span>
+<span class="fc" id="L58">    public Stage getStage() { return stage; }</span>
+<span class="fc" id="L59">    public String getExamSessionId() { return examSessionId; }</span>
+<span class="fc" id="L60">    public String getMonitoringId() { return monitoringId; }</span>
+<span class="fc" id="L61">    public String getResultId() { return resultId; }</span>
+<span class="fc" id="L62">    public String getFailureReason() { return failureReason; }</span>
+<span class="fc" id="L63">    public List&lt;String&gt; getRollbackLog() { return rollbackLog; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

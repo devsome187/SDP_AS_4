@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResultsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.results</a> &gt; <span class="el_source">ResultsService.java</span></div><h1>ResultsService.java</h1><pre class="source lang-java linenums">package proctoring.results;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+public class ResultsService {
+
+    private final GradingEngine gradingEngine;
+    private final TranscriptRecorder transcriptRecorder;
+    private final ResultRepository repository;
+
+    public ResultsService(GradingEngine gradingEngine, TranscriptRecorder transcriptRecorder,
+<span class="fc" id="L14">                          ResultRepository repository) {</span>
+<span class="fc" id="L15">        this.gradingEngine = gradingEngine;</span>
+<span class="fc" id="L16">        this.transcriptRecorder = transcriptRecorder;</span>
+<span class="fc" id="L17">        this.repository = repository;</span>
+<span class="fc" id="L18">    }</span>
+
+    public ExamResult gradeAndRecord(String examSessionId, String studentId, String examId, List&lt;String&gt; answers) {
+        int score;
+        try {
+<span class="fc" id="L23">            score = gradingEngine.grade(examId, answers);</span>
+<span class="fc" id="L24">        } catch (GradingRejectedException e) {</span>
+<span class="fc" id="L25">            repository.save(ExamResult.rejected(examSessionId, studentId, examId, e.getMessage()));</span>
+<span class="fc" id="L26">            throw e;</span>
+<span class="fc" id="L27">        }</span>
+<span class="fc" id="L28">        ExamResult result = ExamResult.recorded(examSessionId, studentId, examId, score,</span>
+<span class="fc" id="L29">                transcriptRecorder.letterGrade(score));</span>
+<span class="fc" id="L30">        repository.save(result);</span>
+<span class="fc" id="L31">        return result;</span>
+    }
+
+    public void cancel(String resultId) {
+<span class="fc" id="L35">        ExamResult result = get(resultId);</span>
+<span class="fc" id="L36">        result.cancel();</span>
+<span class="fc" id="L37">        repository.save(result);</span>
+<span class="fc" id="L38">    }</span>
+
+    public ExamResult get(String resultId) {
+<span class="fc" id="L41">        return repository.findById(resultId)</span>
+<span class="fc" id="L42">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Result not found: &quot; + resultId));</span>
+    }
+
+    public Optional&lt;ExamResult&gt; findRecorded(String examSessionId) {
+<span class="fc" id="L46">        return repository.findByExamSessionId(examSessionId).stream()</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                .filter(r -&gt; r.getStatus() != ExamResult.Status.REJECTED)</span>
+<span class="fc" id="L48">                .findFirst();</span>
+    }
+
+    public Optional&lt;ExamResult&gt; findLatest(String examSessionId) {
+<span class="fc" id="L52">        List&lt;ExamResult&gt; results = repository.findByExamSessionId(examSessionId);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(results.size() - 1));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

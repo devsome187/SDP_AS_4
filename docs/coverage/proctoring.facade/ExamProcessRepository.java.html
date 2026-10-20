@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExamProcessRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Exam Proctoring Facade</a> &gt; <a href="index.source.html" class="el_package">proctoring.facade</a> &gt; <span class="el_source">ExamProcessRepository.java</span></div><h1>ExamProcessRepository.java</h1><pre class="source lang-java linenums">package proctoring.facade;
+
+import proctoring.persistence.JsonFileStore;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+
+public class ExamProcessRepository {
+
+    private final JsonFileStore&lt;ExamProcess&gt; store;
+
+<span class="fc" id="L13">    public ExamProcessRepository(Path dataDir) {</span>
+<span class="fc" id="L14">        store = new JsonFileStore&lt;&gt;(dataDir.resolve(&quot;exam_process.json&quot;), ExamProcess.class, ExamProcess::getId);</span>
+<span class="fc" id="L15">    }</span>
+
+    public void save(ExamProcess process) {
+<span class="fc" id="L18">        store.save(process);</span>
+<span class="fc" id="L19">    }</span>
+
+    public Optional&lt;ExamProcess&gt; findById(String id) {
+<span class="fc" id="L22">        return store.findById(id);</span>
+    }
+
+    public List&lt;ExamProcess&gt; findAll() {
+<span class="fc" id="L26">        return store.findAll();</span>
+    }
+
+    public List&lt;ExamProcess&gt; findUnfinished() {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        return findAll().stream().filter(p -&gt; !p.isFinished()).toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
